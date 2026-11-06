@@ -133,4 +133,4 @@ Langkah berikutnya adalah menjalankan **build CI atau build Windows**, kemudian 
 - [Microsoft: DeleteService](https://learn.microsoft.com/en-us/windows/win32/api/winsvc/nf-winsvc-deleteservice)
 - [windows-service 0.8.1, dokumentasi pembuat wrapper](https://docs.rs/windows-service/0.8.1/windows_service/)
 
-Paket belum dipublikasikan ke repository atau sebagai rilis. Pilihan lisensi proyek publik belum dibekukan dalam eksperimen ini; lisensi dependency tercantum pada metadata crate masing-masing.
+Source eksperimen tersedia di [branch PoC-1A](https://github.com/Parjimin/service-latch/tree/poc/1a-windows-build-verification). Percobaan CI pertama diblokir sebelum runner mulai; lihat [status validasi](docs/VALIDATION.md). Belum ada rilis produksi. Pilihan lisensi proyek publik belum dibekukan dalam eksperimen ini; lisensi dependency tercantum pada metadata crate masing-masing.

@@ -11,14 +11,25 @@ Tanggal: **6 November 2026**. Source package PoC-1A v0.1.0. Lingkungan eksekusi 
 | `tests/ScriptChecks.ps1` | **PASS** pada PowerShell 7.5.4 | 7 file PowerShell ter-parse; deklarasi Native.cs terkompilasi; 9 ownership mismatch ditolak; guard header x64/ARM64/DLL/truncated dan reparse escape diperiksa; tidak ada native SCM API yang dipanggil |
 | YAML workflow, event/permission dan full SHA actions | **PASS**, diparse dan diperiksa | Bukan eksekusi GitHub Actions |
 | JSON template + manifest/lock | **PASS**, valid dan dependency versi tepat | Tidak membuktikan perilaku service |
-| Build/link executable Windows x64 MSVC | **NOT RUN** | Menunggu Windows build/CI; paket source tidak menyertakan .exe yang diklaim telah dibuild |
+| Build/link executable Windows x64 MSVC | **BLOCKED — compiler belum dijalankan** | Run CI pertama gagal sebelum job dimulai; belum ada executable |
 | PowerShell 5.1 pada Windows | **NOT RUN** | Disiapkan pada workflow, belum dijalankan |
 | Instalasi/Start/Stop/fault test/cleanup service | **NOT RUN** | Harus di VM Stock yang disetujui; P/Invoke baru terkompilasi, belum dieksekusi |
 | Automatic boot tanpa login pada Windows 11 Home/Pro Stock | **NOT RUN** | Memerlukan bukti boot lab tersendiri |
 | Shutdown OS normal | **NOT RUN** | Penanganan tersedia dalam source; belum dibuktikan dari SCM |
 | CPU/RAM/process I/O/boot impact | **NOT RUN** | Tidak ada angka benchmark yang diklaim |
 | ReviOS compatibility worker | **NOT RUN** | Tidak ada service yang dipasang pada laptop utama |
-| GitHub Actions workflow | **PREPARED — NOT RUN** | Belum ada repository tujuan/run yang ditentukan dalam pelaksanaan ini |
+| GitHub Actions workflow | **ATTEMPTED — BLOCKED** | Run 42204547174 / attempt 1 ditolak sebelum step pertama karena prasyarat akun GitHub; bukan hasil eksekusi compiler/test |
+
+## Percobaan Windows Build Verification pertama
+
+- Repository: [Parjimin/service-latch](https://github.com/Parjimin/service-latch).
+- Branch: `poc/1a-windows-build-verification`.
+- Source commit yang dicoba: `d4c673d2d55195ed236f0ad6541635346aea73f6`.
+- [Workflow run 42204547174](https://github.com/Parjimin/service-latch/actions/runs/42204547174), job `build-test` 127847790508, event push, 6 November 2026.
+- API GitHub melaporkan workflow failure, tetapi job tidak dimulai dan tidak memiliki step/log runner. Anotasi menunjukkan account-level prerequisite memblokir eksekusi; pemilik akun perlu menyelesaikannya sebelum retry.
+- Status engineering: **BLOCKED sebelum build**, bukan bukti source Rust gagal atau lulus. Belum ada artifact, hasil Windows unit test, runtime SCM atau pengukuran baru.
+- Tidak melakukan retry tanpa perubahan prasyarat, pergantian runner untuk menghindari pembatasan akun, perubahan billing, atau instalasi pada komputer utama. Setelah prasyarat dipulihkan, jalankan ulang job lalu analisis hasil Windows yang sebenarnya.
+- Perubahan dokumentasi status ini tidak mengubah kode service/dependency. Pemeriksaan lokal yang sudah lulus tidak diulang tanpa kebutuhan. PoC-1B/C dan UI belum dimulai.
 
 Dependency terkunci (lima package selain proyek): `windows-service 0.8.1`, `windows-sys 0.61.2`, `windows-link 0.2.1`, `widestring 1.2.1`, `bitflags 2.13.2`. Hanya windows-service merupakan dependency langsung, dengan syarat `cfg(windows)` dan versi exact. Cargo.lock memuat checksum registry. Crate 0.8.1 dipilih setelah memeriksa changelog pembuatnya; pembaruannya menggunakan windows-sys 0.61 dan mengurangi dependency target-platform lama. Ini bukan klaim audit kerentanan lengkap.
 
