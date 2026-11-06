@@ -1,0 +1,18 @@
+[package]
+name = "service-latch-poc1a"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.90"
+publish = false
+description = "Lab-only no-op Windows Service Automatic startup experiment"
+
+[target.'cfg(windows)'.dependencies]
+windows-service = "=0.8.1"
+
+[profile.release]
+opt-level = "s"
+lto = "thin"
+codegen-units = 1
+strip = "debuginfo"
+# Keep unwinding so the service boundary can report a caught Rust panic to SCM.
+panic = "unwind"

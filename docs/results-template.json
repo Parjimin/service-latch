@@ -1,0 +1,48 @@
+{
+  "case_id": "P1A-STOCK-001",
+  "recorded_at_utc": null,
+  "source_sha256": null,
+  "binary_sha256": null,
+  "toolchain": "1.90.0",
+  "environment": {
+    "edition": null,
+    "display_version": null,
+    "full_build": null,
+    "os_architecture": "x64",
+    "process_architecture": "x64",
+    "variant": "Stock",
+    "evidence_type": "REAL VM",
+    "hypervisor": null,
+    "modifications_known": null
+  },
+  "service": {
+    "name": "ServiceLatch.Poc1A.8f61bc537e1c49aaa52ae744ad486ef0",
+    "account": "NT AUTHORITY\\LocalService",
+    "startup_type_observed": null,
+    "state_observed": null,
+    "pid": null,
+    "session_id": null
+  },
+  "authorization": {"installation": false, "smoke": false, "boot": false, "shutdown": false, "cleanup": false},
+  "operator_observations": {
+    "autologin_disabled": null,
+    "guest_host_clock_offset_before_ms": null,
+    "guest_host_clock_offset_after_ms": null,
+    "sign_in_screen_seen_utc": null,
+    "first_login_attempt_utc": null,
+    "no_login_during_wait_confirmed": null,
+    "service_start_utc": null,
+    "clock_uncertainty_ms": null,
+    "notes": null
+  },
+  "criteria": {
+    "A-01": "NOT RUN", "A-02": "NOT RUN", "A-03": "NOT RUN", "A-04": "NOT RUN",
+    "A-05": "NOT RUN", "A-06": "NOT RUN", "A-07": "NOT RUN", "A-08": "NOT RUN",
+    "A-09": "NOT RUN", "A-10": "NOT RUN", "A-11": "NOT RUN"
+  },
+  "idle_measurement": null,
+  "evidence_files": [],
+  "failures_and_gaps": [],
+  "cleanup_verified": false,
+  "overall": "NOT RUN"
+}

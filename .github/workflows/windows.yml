@@ -1,0 +1,54 @@
+name: PoC-1A Windows x64
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: poc1a-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install pinned toolchain
+        shell: pwsh
+        run: rustup toolchain install 1.90.0 --profile minimal --component rustfmt --component clippy --target x86_64-pc-windows-msvc
+      - name: Format
+        run: cargo +1.90.0 fmt --all -- --check
+      - name: Clippy
+        run: cargo +1.90.0 clippy --locked --all-targets --target x86_64-pc-windows-msvc -- -D warnings
+      - name: Unit tests (no service installation)
+        run: cargo +1.90.0 test --locked --all-targets --target x86_64-pc-windows-msvc
+      - name: PowerShell 5.1 syntax, ownership, reparse guards and native declarations
+        shell: powershell
+        run: .\tests\ScriptChecks.ps1
+      - name: Build release
+        run: cargo +1.90.0 build --locked --release --target x86_64-pc-windows-msvc
+      - name: Installer read-only plan (no installation)
+        shell: powershell
+        run: .\scripts\Install-Lab.ps1 -BinaryPath .\target\x86_64-pc-windows-msvc\release\service-latch-poc1a.exe -WhatIf
+      - name: Package and record environment
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path artifact | Out-Null
+          Copy-Item target/x86_64-pc-windows-msvc/release/service-latch-poc1a.exe artifact/
+          Copy-Item scripts, docs -Destination artifact/ -Recurse
+          Copy-Item README.md, Cargo.toml, Cargo.lock, rust-toolchain.toml -Destination artifact/
+          rustc +1.90.0 -Vv | Out-File artifact/environment.txt
+          "Commit: $env:GITHUB_SHA`nRun: $env:GITHUB_RUN_ID`nRunner image: $env:ImageOS $env:ImageVersion" | Out-File artifact/environment.txt -Append
+          Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture | Format-List | Out-File artifact/environment.txt -Append
+          Get-FileHash artifact/service-latch-poc1a.exe -Algorithm SHA256 | Format-List | Out-File artifact/SHA256.txt
+          cargo +1.90.0 tree --locked | Out-File artifact/dependencies.txt
+          'Build/unit tests on a Windows Server runner. Windows 11 Stock auto-start/no-login/idle/cleanup: NOT RUN.' | Out-File artifact/VALIDATION.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: service-latch-poc1a-windows-x64
+          path: artifact/
+          retention-days: 7
+          if-no-files-found: error
